@@ -1,6 +1,7 @@
 package octohooks
 
 import (
+	"bytes"
 	"encoding/json"
 	"net/http"
 
@@ -16,8 +17,8 @@ type Event struct {
 	Err            error
 }
 
-// NewEventFromRequest constructs an event from a github webhook request
-func NewEventFromRequest(r *http.Request) Event {
+// NewEventFromRequestAndBody constructs an event from a github webhook request
+func NewEventFromRequestAndBody(r *http.Request, body []byte) Event {
 	e := Event{}
 	e.Name = r.Header.Get("X-Github-Event")
 
@@ -27,10 +28,12 @@ func NewEventFromRequest(r *http.Request) Event {
 		eventDetail = &github.PullRequestEvent{}
 	}
 
-	if err := json.NewDecoder(r.Body).Decode(eventDetail); err != nil {
+	if err := json.NewDecoder(bytes.NewBuffer(body)).Decode(eventDetail); err != nil {
 		e.Err = err
 		return e
 	}
+
+	e.EventDetail = eventDetail
 
 	return e
 }

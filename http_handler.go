@@ -5,6 +5,7 @@ import (
 	"crypto/sha1"
 	"encoding/hex"
 	"io/ioutil"
+	"log"
 	"net/http"
 )
 
@@ -15,6 +16,12 @@ type Handler struct {
 }
 
 var _ http.Handler = &Handler{}
+
+func NewHandler() *Handler {
+	return &Handler{
+		Events: make(chan Event, 5),
+	}
+}
 
 // ServeHTTP implements http.Handler
 // This is where we handle all incoming github webhooks and check signing
@@ -44,8 +51,11 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Printf("Event: %s", r.Header.Get("X-Github-Event"))
+
 	go func() {
-		h.Events <- NewEventFromRequest(r)
+		e := NewEventFromRequestAndBody(r, body)
+		h.Events <- e
 	}()
 }
 
