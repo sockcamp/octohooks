@@ -75,8 +75,8 @@ func (h *Handler) validSignature(body []byte, r *http.Request) error {
 	}
 
 	expectedMAC := mac.Sum(nil)
-	expectedSig := "sha1=" + hex.EncodeToString(expectedMAC)
-	if !hmac.Equal([]byte(expectedSig), []byte(signature)) {
+	expectedSig := hex.EncodeToString(expectedMAC)
+	if expectedSig != signature {
 		return signatureInvalid("signature invalid")
 	}
 
