@@ -5,7 +5,6 @@ import (
 	"crypto/sha1"
 	"encoding/hex"
 	"io/ioutil"
-	"log"
 	"net/http"
 )
 
@@ -50,8 +49,6 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 		return
 	}
-
-	log.Printf("Event: %s", r.Header.Get("X-Github-Event"))
 
 	go func() {
 		e := NewEventFromRequestAndBody(r, body)

@@ -26,6 +26,8 @@ func NewEventFromRequestAndBody(r *http.Request, body []byte) Event {
 	switch e.Name {
 	case "pull_request":
 		eventDetail = &github.PullRequestEvent{}
+	case "push":
+		eventDetail = &github.PushEvent{}
 	}
 
 	if err := json.NewDecoder(bytes.NewBuffer(body)).Decode(eventDetail); err != nil {
