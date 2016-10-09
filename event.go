@@ -11,10 +11,9 @@ import (
 // Event contains the basic information about an event that happened
 type Event struct {
 	// Name of the event (issue, pull request, commit, etc...)
-	Name           string
-	GithubUsername string
-	EventDetail    interface{}
-	Err            error
+	Name        string
+	EventDetail interface{}
+	Err         error
 }
 
 // NewEventFromRequestAndBody constructs an event from a github webhook request
