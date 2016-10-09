@@ -16,6 +16,8 @@ type Handler struct {
 
 var _ http.Handler = &Handler{}
 
+// NewHandler returns a http.Handler compliant struct that exposes a channel
+// of events that you can create your own consumer against.
 func NewHandler() *Handler {
 	return &Handler{
 		Events: make(chan Event, 5),
@@ -50,10 +52,8 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	go func() {
-		e := NewEventFromRequestAndBody(r, body)
-		h.Events <- e
-	}()
+	e := NewEventFromRequestAndBody(r, body)
+	h.Events <- e
 }
 
 func (h *Handler) validSignature(body []byte, r *http.Request) error {
