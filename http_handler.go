@@ -32,6 +32,10 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if r.Header.Get("Content-Type") != "application/json" {
+		http.Error(w, "content type not allowed", http.StatusUnsupportedMediaType)
+	}
+
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		http.Error(w, "internal server error", http.StatusInternalServerError)
