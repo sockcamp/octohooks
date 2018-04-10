@@ -39,6 +39,7 @@ func TestServeHTTP(t *testing.T) {
 	require.Nil(t, err)
 	req.Header.Set("X-Hub-Signature", sig)
 	req.Header.Set("X-Github-Event", "pull_request")
+	req.Header.Set("content-type", "application/json")
 
 	resp, err := http.DefaultClient.Do(req)
 	require.Nil(t, err)
