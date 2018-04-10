@@ -3,6 +3,8 @@ package octohooks
 import (
 	"io/ioutil"
 	"net/http"
+
+	"github.com/sirupsen/logrus"
 )
 
 // Handler implements http.Handler for handling incoming github webhooks
@@ -28,12 +30,15 @@ func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
 	if r.Method != "POST" {
+		logrus.Info("invalid method for github webhook")
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
 
-	if r.Header.Get("Content-Type") != "application/json" {
+	if ct := r.Header.Get("Content-Type"); ct != "application/json" {
+		logrus.WithField("content-type", ct).Info("invalid content-type for github webhook")
 		http.Error(w, "content type not allowed", http.StatusUnsupportedMediaType)
+		return
 	}
 
 	body, err := ioutil.ReadAll(r.Body)
